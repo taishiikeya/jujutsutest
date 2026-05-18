@@ -124,3 +124,75 @@ jj git push -b main
 jj bookmark move main --to @
 jj git push -b main
 ```
+
+---
+
+## `jj new` と `jj edit` の違い・作業の切り替え
+
+### `jj edit <rev/bookmark>`
+
+既存のコミット（または bookmark）に移動して、その地点を編集します。
+
+```bash
+jj edit main
+jj edit feature-x
+```
+
+### `jj new -m "..."`
+
+現在地点（または指定した基点）から新しい作業コミットを作って移動します。  
+`-m` は新規コミットの description です。
+
+```bash
+jj new -m "test1de"
+```
+
+`jj new` だけでは bookmark 名は作られないため、名前で移動したい場合は作成します。
+
+```bash
+jj bookmark create test1de -r @
+jj edit test1de
+```
+
+### 特定のチェンジから枝分かれできるか
+
+できます。`jj new <rev> -m "..."` を使います。
+
+```bash
+jj new abcd1234 -m "new work from that change"
+```
+
+### `jj edit test1` で `Revision ... doesn't exist` が出る場合
+
+`test1` という rev/bookmark が存在しないのが原因です。まず確認します。
+
+```bash
+jj bookmark list
+jj log -r 'bookmarks()'
+```
+
+リモートだけにある場合（例: `test1@origin`）は:
+
+```bash
+jj git fetch
+jj edit 'test1@origin'
+```
+
+---
+
+## 今いる作業を「別ブランチ」として push する方法
+
+元の `main` とは別に push したい場合は、今のコミット `@` に新しい bookmark を作って、その bookmark を push します。
+
+```bash
+# 例: 現在の作業を test1de というブランチ名で push
+jj bookmark create test1de -r @
+jj git push -b test1de
+```
+
+すでに同名 bookmark がある場合は move してから push:
+
+```bash
+jj bookmark move test1de --to @
+jj git push -b test1de
+```
