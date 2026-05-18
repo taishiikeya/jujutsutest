@@ -196,3 +196,27 @@ jj git push -b test1de
 jj bookmark move test1de --to @
 jj git push -b test1de
 ```
+
+---
+
+## GitHub でマージ後、リモート変更をローカル main に反映する（fetch の流れ）
+
+`test1branch` を GitHub 上で `main` にマージしたあと、ローカル `main` を追従させる基本手順です。
+
+```bash
+jj git fetch
+jj bookmark move main --to main@origin
+jj edit main
+```
+
+次の作業を始めるなら:
+
+```bash
+jj new main -m "next work"
+```
+
+反映確認:
+
+```bash
+jj log -r 'main | main@origin'
+```
